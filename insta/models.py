@@ -2,6 +2,14 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.conf import settings
 
+def upload_avatar_path(instance, filename):
+    ext = filename.split('.')[-1] #拡張子
+    return '/'.join(['avatars', str(instance.userProfile.id) + str(instance.nickname) + str('.') + str(ext)])
+
+def upload_post_path(instance, filename):
+    ext = filename.split('.')[-1] #拡張子
+    return '/'.join(['posts', str(instance.userPost.id) + str(instance.title) + str('.') + str(ext)])
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
         if not email:
@@ -33,10 +41,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
-def upload_avatar_path(instance, filename):
-    ext = filename.split('.')[-1] #拡張子
-    return '/'.join(['avatars', str(instance.userProfile.id) + str(instance.nickname) + str('.') + str(ext)])
-
 class Profile(models.Model):
     nickname = models.CharField(max_length=20)
     userProfile = models.OneToOneField(
@@ -48,10 +52,6 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.nickname
-
-def upload_post_path(instance, filename):
-    ext = filename.split('.')[-1] #拡張子
-    return '/'.join(['posts', str(instance.userPost.id) + str(instance.title) + str('.') + str(ext)])
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
